@@ -1,7 +1,7 @@
 const axios = require('axios');
 
-// const N8N_WEBHOOK_URL = process.env.N8N_WEBHOOK_URL || 'https://n8n.namelomax.beget.tech/webhook/api/chat';
-const N8N_WEBHOOK_URL = process.env.N8N_WEBHOOK_URL 
+const N8N_WEBHOOK_URL = process.env.N8N_WEBHOOK_URL || 'https://n8n.namelomax.beget.tech/webhook/api/chat';
+// const N8N_WEBHOOK_URL = process.env.N8N_WEBHOOK_URL 
 
 module.exports = async (req, res) => {
   if (req.method !== 'POST') {
