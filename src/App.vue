@@ -21,6 +21,9 @@ const sendMessage = async () => {
     const response = await axios.post('/api/chat', {
       message: userInput.value
     })
+    //   const response = await axios.post('/api/chat', {
+    //       message: userInput.value
+    //   })
     const reply = response.data.reply || 'Нет ответа от AI'
     messages.value.push({ text: reply, isUser: false })
   } catch (error) {

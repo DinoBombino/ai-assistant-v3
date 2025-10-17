@@ -1,9 +1,11 @@
 const axios = require('axios');
 
-const N8N_WEBHOOK_URL = process.env.N8N_WEBHOOK_URL || 'https://n8n.namelomax.beget.tech/webhook/api/chat';
-// const N8N_WEBHOOK_URL = process.env.N8N_WEBHOOK_URL 
+// const N8N_WEBHOOK_URL = process.env.N8N_WEBHOOK_URL || 'https://n8n.namelomax.beget.tech/webhook/api/chat';
+const N8N_WEBHOOK_URL = "https://n8n.namelomax.beget.tech/webhook/api/chat";
+
 
 module.exports = async (req, res) => {
+  // Только POST
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
@@ -17,6 +19,7 @@ module.exports = async (req, res) => {
 
     console.log(`Processing message: "${message}"`);
 
+    // Прокси к n8n
     const n8nResponse = await axios.post(N8N_WEBHOOK_URL, {
       message: message.trim()
     }, {
