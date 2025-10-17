@@ -4,19 +4,22 @@ const axios = require('axios');
 const N8N_WEBHOOK_URL = 'https://n8n.namelomax.beget.tech/webhook/api/chat';
 
 
-mmodule.exports = async (req, res) => {
+module.exports = async (req, res) => {
+  console.log('Function /api/chat triggered', { method: req.method, body: req.body });
+
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
   try {
     const { message } = req.body;
+    console.log('Received message:', message);
+
     if (!message || typeof message !== 'string' || !message.trim()) {
       return res.status(400).json({ error: 'Message is required' });
     }
 
-    console.log(`Processing message: "${message}"`);
-
+    console.log('Sending request to N8N:', N8N_WEBHOOK_URL);
     const n8nResponse = await axios.post(N8N_WEBHOOK_URL, {
       message: message.trim()
     }, {
@@ -24,14 +27,20 @@ mmodule.exports = async (req, res) => {
       headers: { 'Content-Type': 'application/json' }
     });
 
+    console.log('N8N response:', n8nResponse.data);
     const reply = n8nResponse.data?.contents?.[0]?.parts?.[0]?.reply || 'Нет ответа от AI';
+
     res.json({
       success: true,
       reply: reply,
       timestamp: new Date().toISOString()
     });
   } catch (error) {
-    console.error('Chat API error:', error.message);
+    console.error('Chat API error:', {
+      message: error.message,
+      code: error.code,
+      response: error.response?.data || error.response?.status
+    });
     if (error.code === 'ECONNABORTED') {
       return res.status(408).json({ error: 'AI timeout' });
     }
@@ -41,6 +50,6 @@ mmodule.exports = async (req, res) => {
         details: error.response.data
       });
     }
-    res.status(500).json({ error: 'Internal server error' });
+    res.status(500).json({ error: 'Internal server error', details: error.message });
   }
 };
